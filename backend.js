@@ -12,23 +12,21 @@ const SECRET = "mysecretkey";
 // 👉 Fake database (for simplicity)
 let users = [];
 
-/* ==============================
-   1. REGISTER API
-================================ */
+
+//   1. REGISTER API
+
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // check if user exists
+   
     const userExists = users.find(u => u.email === email);
     if (userExists) {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // save user
     users.push({
       name,
       email,
@@ -44,9 +42,9 @@ app.post("/register", async (req, res) => {
 });
 
 
-/* ==============================
-   2. LOGIN API
-================================ */
+
+ //  2. LOGIN API
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,13 +54,12 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "User not found" });
     }
 
-    // compare password
+   
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid password" });
     }
 
-    // create JWT token
     const token = jwt.sign(
       { email: user.email, role: user.role },
       SECRET,
@@ -77,9 +74,8 @@ app.post("/login", async (req, res) => {
 });
 
 
-/* ==============================
-   3. TOKEN VALIDATION MIDDLEWARE
-================================ */
+  // 3. TOKEN VALIDATION MIDDLEWARE
+
 function verifyToken(req, res, next) {
   try {
     const token = req.headers.authorization;
@@ -99,9 +95,9 @@ function verifyToken(req, res, next) {
 }
 
 
-/* ==============================
-   4. ROLE-BASED ACCESS (RBAC)
-================================ */
+
+ //  4. ROLE-BASED ACCESS (RBAC)
+
 function checkRole(role) {
   return (req, res, next) => {
     if (req.user.role !== role) {
@@ -112,9 +108,8 @@ function checkRole(role) {
 }
 
 
-/* ==============================
-   5. PROTECTED ROUTES
-================================ */
+//   5. PROTECTED ROUTES
+
 
 // Only Student
 app.get("/student", verifyToken, checkRole("student"), (req, res) => {
@@ -127,9 +122,9 @@ app.get("/teacher", verifyToken, checkRole("teacher"), (req, res) => {
 });
 
 
-/* ==============================
-   SERVER START
-================================ */
+
+ //  SERVER START
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
