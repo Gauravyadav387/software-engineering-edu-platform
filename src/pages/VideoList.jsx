@@ -12,7 +12,17 @@ function VideoList(){
     const fetchVideos = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/videos?subject=${subject}`);
-        setVideos(res.data);
+        
+        if (res.data && res.data.length > 0) {
+          setVideos(res.data);
+        } else {
+          // If the database is empty, fallback to the initial demo videos automatically
+          setVideos([
+            {_id:"1", title:"Lecture 1", teacher: { name: "Dr. Smith" }},
+            {_id:"2", title:"Lecture 2", teacher: { name: "Prof. Johnson" }},
+            {_id:"3", title:"Advanced Topics", teacher: { name: "Dr. Smith" }}
+          ]);
+        }
       } catch (err) {
         console.error("Failed to fetch videos from API, using fallback data");
         // Fallback dummy data mapped to our model expectations if backend fails to answer
