@@ -34,7 +34,11 @@ function Login() {
         else navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred. Invalid Credentials.");
+      if (!err.response) {
+        setError("Network error: Make sure MongoDB and Backend Server are running!");
+      } else {
+        setError(err.response?.data?.message || "An error occurred.");
+      }
     }
   };
 
