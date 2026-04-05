@@ -7,7 +7,7 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 
 const upload = multer({ dest: "uploads/" });
 
-router.post("/upload", upload.single("video"), uploadVideo);
+router.post("/upload", protect, authorize("teacher", "admin"), upload.single("video"), uploadVideo);
 router.get("/", getVideos);
 router.delete("/:id", protect, authorize("teacher"), deleteVideo);
 
