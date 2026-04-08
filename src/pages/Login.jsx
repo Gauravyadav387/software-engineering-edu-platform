@@ -10,6 +10,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
@@ -20,6 +21,14 @@ function Login() {
       setError("Please fill in all inputs.");
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      setEmailError(true);
+      return;
+    }
+    setEmailError(false);
 
     try {
       if (isRegister) {
@@ -70,8 +79,8 @@ function Login() {
           type="email" 
           placeholder="Email" 
           value={email} 
-          onChange={(e)=>setEmail(e.target.value)} 
-          className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onChange={(e)=>{ setEmail(e.target.value); setEmailError(false); }} 
+          className={`w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 ${emailError ? "border-red-500 ring-1 ring-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
         />
 
         <input 
