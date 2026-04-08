@@ -11,13 +11,19 @@ function Login() {
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
     const trimmedEmail = email.trim();
     const trimmedName = name.trim();
     
-    if(trimmedEmail === "" || password === "" || (isRegister && trimmedName === "")){
+    if (isForgotPassword) {
+      if (trimmedEmail === "" || password === "") {
+        setError("Please enter your email and a new password.");
+        return;
+      }
+    } else if(trimmedEmail === "" || password === "" || (isRegister && trimmedName === "")){
       setError("Please fill in all inputs.");
       return;
     }
@@ -31,7 +37,11 @@ function Login() {
     setEmailError(false);
 
     try {
-      if (isRegister) {
+      if (isForgotPassword) {
+        await axios.post("http://localhost:5000/api/auth/reset-password", { email: trimmedEmail, newPassword: password });
+        setIsForgotPassword(false);
+        setError("Password reset successful! Please login.");
+      } else if (isRegister) {
         await axios.post("http://localhost:5000/api/auth/register", { name: trimmedName, email: trimmedEmail, password, role });
         setIsRegister(false);
         setError("Registration successful! Please login.");
@@ -57,7 +67,9 @@ function Login() {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-gray-100">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
-        <h2 className="text-3xl font-extrabold mb-6 text-gray-800">{isRegister ? "Register" : "Login"}</h2>
+        <h2 className="text-3xl font-extrabold mb-6 text-gray-800">
+          {isForgotPassword ? "Reset Password" : isRegister ? "Register" : "Login"}
+        </h2>
         
         {error && (
           <p className={`mb-4 font-semibold ${error.includes("successful") ? "text-green-600" : "text-red-500"}`}>
@@ -65,7 +77,7 @@ function Login() {
           </p>
         )}
 
-        {isRegister && (
+        {!isForgotPassword && isRegister && (
           <input 
             type="text" 
             placeholder="Full Name" 
@@ -85,13 +97,13 @@ function Login() {
 
         <input 
           type="password" 
-          placeholder="Password" 
+          placeholder={isForgotPassword ? "New Password" : "Password"}
           value={password} 
           onChange={(e)=>setPassword(e.target.value)} 
           className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        {isRegister && (
+        {!isForgotPassword && isRegister && (
           <select 
             value={role} 
             onChange={(e)=>setRole(e.target.value)} 
@@ -107,14 +119,23 @@ function Login() {
           onClick={handleSubmit} 
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mb-4 shadow"
         >
-          {isRegister ? "Register" : "Login"}
+          {isForgotPassword ? "Reset Password" : isRegister ? "Register" : "Login"}
         </button>
 
+        {!isForgotPassword && !isRegister && (
+          <p 
+            className="text-red-500 cursor-pointer hover:underline font-medium mb-3 text-sm" 
+            onClick={() => { setIsForgotPassword(true); setError(""); }}
+          >
+            Forgot Password?
+          </p>
+        )}
+
         <p 
-          className="text-blue-500 cursor-pointer hover:underline font-medium" 
-          onClick={() => { setIsRegister(!isRegister); setError(""); }}
+          className="text-blue-500 cursor-pointer hover:underline font-medium text-sm" 
+          onClick={() => { setIsRegister(!isRegister); setIsForgotPassword(false); setError(""); }}
         >
-          {isRegister ? "Already have an account? Login" : "Don't have an account? Register"}
+          {isForgotPassword || isRegister ? "Back to Login" : "Don't have an account? Register"}
         </p>
       </div>
     </div>
