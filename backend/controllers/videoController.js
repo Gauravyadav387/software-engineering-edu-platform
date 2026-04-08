@@ -27,8 +27,19 @@ exports.uploadVideo = async (req, res) => {
 };
 
 exports.getVideos = async (req, res) => {
-  const videos = await Video.find().populate("teacher subject");
+  const query = req.query.subject ? { subject: new RegExp(`^${req.query.subject}$`, "i") } : {};
+  const videos = await Video.find(query).populate("teacher", "name email");
   res.json(videos);
+};
+
+exports.getVideoById = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id).populate("teacher", "name email");
+    if (!video) return res.status(404).json({ error: "Video not found" });
+    res.json(video);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 exports.deleteVideo = async (req, res) => {
