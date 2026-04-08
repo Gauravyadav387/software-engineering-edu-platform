@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const videoRoutes = require("./routes/videoRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/videos", videoRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running");

@@ -29,8 +29,8 @@ function Login() {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         
         const userRole = res.data.user.role;
-        if (userRole === "teacher") navigate("/teacher-dashboard");
-        else if (userRole === "admin") navigate("/admin-dashboard");
+        if (userRole === "teacher") navigate("/teacher/dashboard");
+        else if (userRole === "admin") navigate("/admin");
         else navigate("/dashboard");
       }
     } catch (err) {
@@ -43,26 +43,65 @@ function Login() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <div style={{textAlign:"center", width: "350px", padding:"20px", boxShadow:"0 0 10px gray", borderRadius:"8px"}}>
-        <h2>{isRegister ? "Register" : "Login"}</h2>
-        {error && <p style={{color: error.includes("successful") ? "green" : "red"}}>{error}</p>}
-        {isRegister && (
-          <input type="text" placeholder="Full Name" value={name} onChange={(e)=>setName(e.target.value)} style={{width:"100%", padding:"10px", marginBottom:"10px", boxSizing:"border-box"}} />
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
+        <h2 className="text-3xl font-extrabold mb-6 text-gray-800">{isRegister ? "Register" : "Login"}</h2>
+        
+        {error && (
+          <p className={`mb-4 font-semibold ${error.includes("successful") ? "text-green-600" : "text-red-500"}`}>
+            {error}
+          </p>
         )}
-        <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} style={{width:"100%", padding:"10px", marginBottom:"10px", boxSizing:"border-box"}} />
-        <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} style={{width:"100%", padding:"10px", marginBottom:"15px", boxSizing:"border-box"}} />
+
         {isRegister && (
-          <select value={role} onChange={(e)=>setRole(e.target.value)} style={{width:"100%", padding:"10px", marginBottom:"15px"}}>
+          <input 
+            type="text" 
+            placeholder="Full Name" 
+            value={name} 
+            onChange={(e)=>setName(e.target.value)} 
+            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
+        
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={(e)=>setEmail(e.target.value)} 
+          className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e)=>setPassword(e.target.value)} 
+          className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        {isRegister && (
+          <select 
+            value={role} 
+            onChange={(e)=>setRole(e.target.value)} 
+            className="w-full border p-3 rounded mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
             <option value="admin">Admin</option>
           </select>
         )}
-        <button onClick={handleSubmit} style={{width:"100%", padding:"10px", backgroundColor:"#0077ff", color:"white", border:"none", borderRadius:"5px", marginBottom:"10px"}}>
+
+        <button 
+          onClick={handleSubmit} 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mb-4 shadow"
+        >
           {isRegister ? "Register" : "Login"}
         </button>
-        <p style={{cursor: "pointer", color: "blue", margin: 0}} onClick={() => { setIsRegister(!isRegister); setError(""); }}>
+
+        <p 
+          className="text-blue-500 cursor-pointer hover:underline font-medium" 
+          onClick={() => { setIsRegister(!isRegister); setError(""); }}
+        >
           {isRegister ? "Already have an account? Login" : "Don't have an account? Register"}
         </p>
       </div>
