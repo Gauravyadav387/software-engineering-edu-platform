@@ -8,10 +8,7 @@ const videoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
-  subject: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Subject"
-  },
+  subject: String,
   views: {
     type: Number,
     default: 0
