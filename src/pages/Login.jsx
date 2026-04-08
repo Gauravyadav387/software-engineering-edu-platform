@@ -13,18 +13,21 @@ function Login() {
 
   const handleSubmit = async () => {
     setError("");
-    if(email === "" || password === "" || (isRegister && name === "")){
+    const trimmedEmail = email.trim();
+    const trimmedName = name.trim();
+    
+    if(trimmedEmail === "" || password === "" || (isRegister && trimmedName === "")){
       setError("Please fill in all inputs.");
       return;
     }
 
     try {
       if (isRegister) {
-        await axios.post("http://localhost:5000/api/auth/register", { name, email, password, role });
+        await axios.post("http://localhost:5000/api/auth/register", { name: trimmedName, email: trimmedEmail, password, role });
         setIsRegister(false);
         setError("Registration successful! Please login.");
       } else {
-        const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+        const res = await axios.post("http://localhost:5000/api/auth/login", { email: trimmedEmail, password });
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         
@@ -35,7 +38,7 @@ function Login() {
       }
     } catch (err) {
       if (!err.response) {
-        setError("Network error: Make sure MongoDB and Backend Server are running!");
+        setError("Network error: Could not connect to Backend Server (Port 5000). Ensure it is running!");
       } else {
         setError(err.response?.data?.message || "An error occurred.");
       }
