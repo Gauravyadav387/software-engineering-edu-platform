@@ -5,25 +5,25 @@ require("../models/user");
 
 exports.uploadVideo = async (req, res) => {
   try {
-    console.log("FILE:", req.file);
-    console.log("BODY:", req.body);
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "video"
-    });
+    if (!req.file) {
+      return res.status(400).json({ error: "No video file provided" });
+    }
+
+    const videoUrl = "http://localhost:5000/uploads/" + req.file.filename;
 
     const video = await Video.create({
       title: req.body.title,
       description: req.body.description,
-      url: result.secure_url,
-      teacher: null,
+      url: videoUrl,
+      teacher: req.user ? req.user.id : null, 
       subject: req.body.subject
     });
 
     res.json(video);
   } catch (err) {
-  console.error("UPLOAD ERROR:", err);
-  res.status(500).json({ error: err.message });
-}
+    console.error("UPLOAD ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
 };
 
 exports.getVideos = async (req, res) => {
