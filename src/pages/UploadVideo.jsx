@@ -8,6 +8,7 @@ const UploadVideo = () => {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
@@ -24,6 +25,8 @@ const UploadVideo = () => {
       alert("Title, subject and file are required!");
       return;
     }
+    
+    setUploading(true);
 
     const formData = new FormData();
     formData.append("title", title);
@@ -44,7 +47,10 @@ const UploadVideo = () => {
       navigate("/teacher/manage");
     } catch (error) {
       console.error("Upload error", error);
-      alert("Upload failed. Make sure you are logged in as a teacher/admin.");
+      const serverError = error.response?.data?.error;
+      alert(`Upload failed: ${serverError || "Make sure you are logged in as a teacher/admin."}`);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -92,9 +98,10 @@ const UploadVideo = () => {
 
         <button
           onClick={handleUpload}
-          className="bg-blue-600 text-white w-full py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+          disabled={uploading}
+          className={`${uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"} text-white w-full py-3 rounded-lg transition font-semibold`}
         >
-          Upload Video
+          {uploading ? "Uploading (Please wait)..." : "Upload Video"}
         </button>
       </div>
     </div>
