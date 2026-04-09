@@ -53,7 +53,7 @@ cd software-engineering-edu-platform
 3. Prepare the environment file. Create a `.env` in the `backend` folder:
    ```env
    MONGO_URI=mongodb://127.0.0.1:27017/edubridge
-   JWT_SECRET=supersecret
+   JWT_SECRET=your_jwt_secret_key_here
    PORT=5000
    BASE_URL=http://localhost:5000
    ```
@@ -61,7 +61,7 @@ cd software-engineering-edu-platform
    ```bash
    node seedAdmin.js
    ```
-   *(This creates an admin with email: `yadavgaurav332005@gmail.com` and password `admin123`)*
+   *(This script securely provisions an admin account. If you wish to change the default admin credentials for your local environment, please edit the variables inside `seedAdmin.js` before executing.)*
 5. Start the backend server:
    ```bash
    npm start
