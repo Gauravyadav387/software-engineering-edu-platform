@@ -1,16 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Subjects() {
   const [search, setSearch] = useState("");
+  const [mergedSubjects, setMergedSubjects] = useState([
+    { id: "def_1", name: "Mathematics", icon: "📐" },
+    { id: "def_2", name: "Physics", icon: "⚛️" },
+    { id: "def_3", name: "Computer Science", icon: "💻" }
+  ]);
 
-  const subjects = [
-    { id: 1, name: "Mathematics", icon: "📐" },
-    { id: 2, name: "Physics", icon: "⚛️" },
-    { id: 3, name: "Computer Science", icon: "💻" }
-  ];
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/videos/subjects");
+        const dynamicSubjects = res.data;
+        
+        // Merge the dynamic subjects safely
+        setMergedSubjects(prev => {
+          const newSubjectsList = [...prev];
+          dynamicSubjects.forEach((sub, index) => {
+            // Check if it already exists (case-insensitive)
+            if (!newSubjectsList.some(p => p.name.toLowerCase() === sub.toLowerCase())) {
+              newSubjectsList.push({ id: `dyn_${index}`, name: sub, icon: "📚" });
+            }
+          });
+          return newSubjectsList;
+        });
+      } catch (err) {
+        console.error("Failed to fetch subjects:", err);
+      }
+    };
+    fetchSubjects();
+  }, []);
 
-  const filteredSubjects = subjects.filter(subject =>
+  const filteredSubjects = mergedSubjects.filter(subject =>
     subject.name.toLowerCase().includes(search.toLowerCase())
   );
 

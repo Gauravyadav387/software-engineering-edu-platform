@@ -67,8 +67,14 @@ function Login() {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-gray-100">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
-        <h2 className="text-3xl font-extrabold mb-6 text-gray-800">
-          {isForgotPassword ? "Reset Password" : isRegister ? "Register" : "Login"}
+        <div className="mb-8">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-2 tracking-tight">
+            EduBridge
+          </h1>
+          <p className="text-gray-500 font-medium text-sm">Empowering Your Learning Journey</p>
+        </div>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          {isForgotPassword ? "Reset Password" : isRegister ? "Create an Account" : "Welcome"}
         </h2>
         
         {error && (

@@ -1,43 +1,92 @@
-# software-engineering-edu-platform
-A simple centralized learning platform for students to access subject-wise educational videos and for teachers to upload lectures and track reach. Software Engineering course project.
+# EduBridge - Educational Video Platform
 
-## Frontend Development (Create React App)
+EduBridge is a comprehensive full-stack web application designed for students to access subject-wise educational videos, teachers to upload lectures and track analytics, and administrators to manage the platform ecosystem. It is built as a Software Engineering course project.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Features
 
-### Available Scripts
+### For Students
+* **Dynamic Course Catalog:** Browse available subjects easily, populated dynamically when new content is uploaded.
+* **Video Playback:** Watch high-quality lecture videos linked directly through an integrated responsive video player. 
+* **Search capabilities:** Search for specific topics or instructors.
 
-In the project directory, you can run:
+### For Teachers
+* **Content Upload:** Easily upload video files (.mp4, .mkv, etc.) and tag them with subjects and descriptions.
+* **Dashboard & Analytics:** Track metrics and manage the content you own. Note: Teachers can strictly only manage/delete videos they have personally uploaded.
 
-#### `npm start`
+### For Administrators
+* **User Management:** Oversee platform usage, evaluate existing users, and safely prune old/inappropriate user accounts.
+* **Universal Access:** Delete inappropriate content globally across any subject or instructor.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 💻 Tech Stack
+* **Frontend:** React.js, Tailwind CSS, Axios, React Router v7
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB (using Mongoose)
+* **File Storage:** Local Server Storage (via Multer)
+* **Authentication:** JSON Web Tokens (JWT) & bcrypt
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-#### `npm test`
+## 🛠️ Setup & Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Follow these steps to run the application securely on your local environment.
 
-#### `npm run build`
+### Prerequisites
+* **Node.js** (v18.x or higher)
+* **MongoDB Community Server** running locally (Port `27017`)
+* **Git** installed on your machine
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. Clone the Repository
+```bash
+git clone <your-repository-url>
+cd software-engineering-edu-platform
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Backend Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Prepare the environment file. Create a `.env` in the `backend` folder:
+   ```env
+   MONGO_URI=mongodb://127.0.0.1:27017/edubridge
+   JWT_SECRET=supersecret
+   PORT=5000
+   BASE_URL=http://localhost:5000
+   ```
+4. Seed the initial Administrator Account (Required to explore Admin features):
+   ```bash
+   node seedAdmin.js
+   ```
+   *(This creates an admin with email: `yadavgaurav332005@gmail.com` and password `admin123`)*
+5. Start the backend server:
+   ```bash
+   npm start
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 3. Frontend Setup
+1. Open a **new terminal tab** and stay in the project root (`software-engineering-edu-platform`).
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the React development server:
+   ```bash
+   npm start
+   ```
+4. The application will automatically launch at [http://localhost:3000](http://localhost:3000).
 
-#### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📁 Repository Structure
+A highly modularized component hierarchy is maintained:
+* `/backend/controllers/` - API implementation logic.
+* `/backend/models/` - Mongoose database schemas.
+* `/backend/routes/` - Express endpoint routing.
+* `/backend/middleware/` - JWT user authorization handlers.
+* `/backend/uploads/` - Locally stored original video files handled by Multer.
+* `/src/pages/` - React frontend interfaces mapped to routes.
+* `/tailwind.config.js` - Global aesthetic guidelines spanning UI framework rendering.

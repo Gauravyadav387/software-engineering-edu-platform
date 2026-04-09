@@ -56,7 +56,7 @@ function VideoList() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <button 
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/subjects")}
             className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >
             <span className="mr-2">←</span> Back to Subjects
