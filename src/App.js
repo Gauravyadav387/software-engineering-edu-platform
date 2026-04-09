@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+importVideos { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 
 import Dashboard from "./Pages/Teacher/Dashboard";
-import UploadVideo from "./Pages/Teacher/UploadVideo";
+import UploadVideo from "./Pages/Teacher/UploadVideos";
 import ManageVideos from "./Pages/Teacher/ManageVideos";
 import Analytics from "./Pages/Teacher/Analytics";
 import AdminPanel from "./Pages/Admin/AdminPanel";
