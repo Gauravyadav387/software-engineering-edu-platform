@@ -1,95 +1,74 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const AdminPanel = () => {
   const [users, setUsers] = useState([]);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("student");
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("users")) || [];
-    setUsers(data);
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${API_URL}/api/admin/users`, {
+          headers: { Authorization: token },
+        });
+        setUsers(res.data);
+      } catch (error) {
+        console.error("Error fetching users", error);
+      }
+    };
+    fetchUsers();
   }, []);
 
-  const save = (data) => {
-    setUsers(data);
-    localStorage.setItem("users", JSON.stringify(data));
+  const deleteUser = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}/api/admin/users/${id}`, {
+        headers: { Authorization: token },
+      });
+      setUsers(users.filter((u) => u._id !== id));
+    } catch (error) {
+      console.error("Error deleting user", error);
+      alert("Failed to delete user");
+    }
   };
 
-  const addUser = () => {
-    if (!name) return alert("Enter name");
-
-    const newUser = {
-      id: Date.now(),
-      name,
-      role,
-      active: true,
-    };
-
-    save([...users, newUser]);
-    setName("");
-  };
-
-  const toggle = (id) => {
-    const updated = users.map((u) =>
-      u.id === id ? { ...u, active: !u.active } : u
-    );
-    save(updated);
-  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
+    <div className="min-h-screen bg-gray-100 flex justify-center py-10">
+
+
       <div className="w-full max-w-4xl p-8">
-
-        <h2 className="text-3xl font-bold mb-6">Admin Panel</h2>
-
-        {/* Add User */}
-        <div className="bg-white p-5 rounded-xl shadow mb-6 flex gap-3">
-
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter Name"
-            className="border p-2 rounded w-full"
-          />
-
-          <select
-            className="border p-2 rounded"
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-          </select>
-
-          <button
-            onClick={addUser}
-            className="bg-blue-600 text-white px-5 rounded"
-          >
-            Add
-          </button>
-
-        </div>
+        <h2 className="text-3xl font-bold mb-6">Admin Panel: User Management</h2>
 
         {/* User List */}
-        {users.map((u) => (
-          <div
-            key={u.id}
-            className="bg-white p-5 mb-4 rounded-xl shadow flex justify-between items-center"
-          >
-            <div>
-              <p className="font-semibold">{u.name}</p>
-              <p className="text-sm text-gray-500">{u.role}</p>
-            </div>
-
-            <button
-              onClick={() => toggle(u.id)}
-              className={`px-4 py-1 rounded text-white ${
-                u.active ? "bg-green-500" : "bg-gray-500"
-              }`}
+        {users.length === 0 ? (
+          <p className="text-gray-500">No users found.</p>
+        ) : (
+          users.map((u) => (
+            <div
+              key={u._id}
+              className="bg-white p-5 mb-4 rounded-xl shadow flex justify-between items-center hover:shadow-lg transition"
             >
-              {u.active ? "Active" : "Inactive"}
-            </button>
-          </div>
-        ))}
+              <div>
+                <p className="font-semibold text-lg">{u.name}</p>
+                <p className="text-sm text-gray-500">{u.email} &bull; <span className="uppercase font-bold">{u.role}</span></p>
+              </div>
+
+              <button
+                onClick={() => {
+                  if(window.confirm("Are you sure you want to delete this user?")) {
+                    deleteUser(u._id)
+                  }
+                }}
+                className="px-4 py-1 rounded text-white bg-red-500 hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        )}
 
       </div>
     </div>
