@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function VideoPlayer() {
   const { id } = useParams();

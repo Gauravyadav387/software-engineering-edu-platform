@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const UploadVideo = () => {
   const [title, setTitle] = useState("");
