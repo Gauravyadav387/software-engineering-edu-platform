@@ -12,6 +12,8 @@ function Login() {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
@@ -19,9 +21,16 @@ function Login() {
     const trimmedName = name.trim();
     
     if (isForgotPassword) {
-      if (trimmedEmail === "" || password === "") {
-        setError("Please enter your email and a new password.");
-        return;
+      if (!otpSent) {
+        if (trimmedEmail === "") {
+          setError("Please enter your email to receive an OTP.");
+          return;
+        }
+      } else {
+        if (otp === "" || password === "") {
+          setError("Please enter the OTP and a new password.");
+          return;
+        }
       }
     } else if(trimmedEmail === "" || password === "" || (isRegister && trimmedName === "")){
       setError("Please fill in all inputs.");
@@ -38,9 +47,18 @@ function Login() {
 
     try {
       if (isForgotPassword) {
-        await axios.post("http://localhost:5000/api/auth/reset-password", { email: trimmedEmail, newPassword: password });
-        setIsForgotPassword(false);
-        setError("Password reset successful! Please login.");
+        if (!otpSent) {
+          const res = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: trimmedEmail });
+          setOtpSent(true);
+          setError(res.data?.message || "OTP Sent! Please check your email.");
+        } else {
+          await axios.post("http://localhost:5000/api/auth/reset-password", { email: trimmedEmail, otp, newPassword: password });
+          setIsForgotPassword(false);
+          setOtpSent(false);
+          setOtp("");
+          setPassword("");
+          setError("Password reset successful! Please login.");
+        }
       } else if (isRegister) {
         await axios.post("http://localhost:5000/api/auth/register", { name: trimmedName, email: trimmedEmail, password, role });
         setIsRegister(false);
@@ -74,7 +92,7 @@ function Login() {
           <p className="text-gray-500 font-medium text-sm">Empowering Your Learning Journey</p>
         </div>
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          {isForgotPassword ? "Reset Password" : isRegister ? "Create an Account" : "Welcome"}
+          {isForgotPassword ? (otpSent ? "Enter OTP & New Password" : "Reset Password") : isRegister ? "Create an Account" : "Welcome"}
         </h2>
         
         {error && (
@@ -93,21 +111,42 @@ function Login() {
           />
         )}
         
-        <input 
-          type="email" 
-          placeholder="Email" 
-          value={email} 
-          onChange={(e)=>{ setEmail(e.target.value); setEmailError(false); }} 
-          className={`w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 ${emailError ? "border-red-500 ring-1 ring-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
-        />
+        {!isForgotPassword || !otpSent ? (
+          <input 
+            type="email" 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e)=>{ setEmail(e.target.value); setEmailError(false); }} 
+            className={`w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 ${emailError ? "border-red-500 ring-1 ring-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
+          />
+        ) : (
+          <input 
+            type="email" 
+            value={email}
+            disabled
+            className="w-full border p-3 rounded mb-4 bg-gray-100 text-gray-500 cursor-not-allowed"
+          />
+        )}
 
-        <input 
-          type="password" 
-          placeholder={isForgotPassword ? "New Password" : "Password"}
-          value={password} 
-          onChange={(e)=>setPassword(e.target.value)} 
-          className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        {isForgotPassword && otpSent && (
+          <input 
+            type="text" 
+            placeholder="Enter 6-digit OTP"
+            value={otp} 
+            onChange={(e)=>setOtp(e.target.value)} 
+            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 tracking-widest text-center font-semibold"
+          />
+        )}
+
+        {(!isForgotPassword || otpSent) && (
+          <input 
+            type="password" 
+            placeholder={isForgotPassword ? "New Password" : "Password"}
+            value={password} 
+            onChange={(e)=>setPassword(e.target.value)} 
+            className="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
 
         {!isForgotPassword && isRegister && (
           <select 
@@ -125,13 +164,13 @@ function Login() {
           onClick={handleSubmit} 
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mb-4 shadow"
         >
-          {isForgotPassword ? "Reset Password" : isRegister ? "Register" : "Login"}
+          {isForgotPassword ? (otpSent ? "Verify & Reset Password" : "Send OTP") : isRegister ? "Register" : "Login"}
         </button>
 
         {!isForgotPassword && !isRegister && (
           <p 
             className="text-red-500 cursor-pointer hover:underline font-medium mb-3 text-sm" 
-            onClick={() => { setIsForgotPassword(true); setError(""); }}
+            onClick={() => { setIsForgotPassword(true); setError(""); setOtpSent(false); setOtp(""); }}
           >
             Forgot Password?
           </p>
@@ -139,7 +178,7 @@ function Login() {
 
         <p 
           className="text-blue-500 cursor-pointer hover:underline font-medium text-sm" 
-          onClick={() => { setIsRegister(!isRegister); setIsForgotPassword(false); setError(""); }}
+          onClick={() => { setIsRegister(!isRegister); setIsForgotPassword(false); setError(""); setOtpSent(false); setOtp(""); }}
         >
           {isForgotPassword || isRegister ? "Back to Login" : "Don't have an account? Register"}
         </p>

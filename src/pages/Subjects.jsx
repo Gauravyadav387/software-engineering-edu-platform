@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Subjects() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [mergedSubjects, setMergedSubjects] = useState([
     { id: "def_1", name: "Mathematics", icon: "📐" },
@@ -39,8 +40,18 @@ function Subjects() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto text-center">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Go Back Button */}
+      <div className="absolute top-6 left-6 sm:top-10 sm:left-10">
+        <button 
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors text-lg"
+        >
+          ← Go Back
+        </button>
+      </div>
+      
+      <div className="max-w-4xl mx-auto text-center mt-8">
         <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Select Subject</h2>
 
         {/* 🔍 Search Bar */}

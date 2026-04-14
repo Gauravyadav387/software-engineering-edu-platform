@@ -25,16 +25,6 @@ const TeacherDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex justify-center">
       <div className="w-full max-w-6xl p-10 relative">
-        <button 
-          onClick={() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/");
-          }} 
-          className="absolute top-5 right-5 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-        >
-          Logout
-        </button>
 
         <h1 className="text-4xl font-bold mb-10 text-center">
           Teacher Dashboard

@@ -34,20 +34,10 @@ const AdminPanel = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center py-10">
-      <button 
-        onClick={handleLogout} 
-        className="absolute top-5 right-5 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-      >
-        Logout
-      </button>
+
 
       <div className="w-full max-w-4xl p-8">
         <h2 className="text-3xl font-bold mb-6">Admin Panel: User Management</h2>

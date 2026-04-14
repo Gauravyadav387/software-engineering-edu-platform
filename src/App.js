@@ -12,11 +12,14 @@ import Analytics from "./pages/Analytics";
 import AdminPanel from "./pages/AdminPanel";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import Layout from "./components/Layout";
+
 function App(){
 
 return(
 
 <Router>
+<Layout>
 
 <Routes>
 
@@ -44,6 +47,7 @@ return(
 
 </Routes>
 
+</Layout>
 </Router>
 
 );
