@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const AdminPanel = () => {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const AdminPanel = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/admin/users", {
+        const res = await axios.get(`${API_URL}/api/admin/users`, {
           headers: { Authorization: token },
         });
         setUsers(res.data);
@@ -24,7 +25,7 @@ const AdminPanel = () => {
   const deleteUser = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+      await axios.delete(`${API_URL}/api/admin/users/${id}`, {
         headers: { Authorization: token },
       });
       setUsers(users.filter((u) => u._id !== id));

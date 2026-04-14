@@ -9,6 +9,16 @@ const videoSchema = new mongoose.Schema({
     ref: "User"
   },
   subject: String,
+  subject_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Subject"
+  },
+  format: {
+    type: String,
+    enum: ["MP4", "MKV"],
+    default: "MP4"
+  },
+  cloudinary_id: String,
   views: {
     type: Number,
     default: 0

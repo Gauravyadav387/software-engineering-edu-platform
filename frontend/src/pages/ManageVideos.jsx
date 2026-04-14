@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const ManageVideos = () => {
   const [videos, setVideos] = useState([]);
@@ -9,7 +10,7 @@ const ManageVideos = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/videos");
+        const res = await axios.get(`${API_URL}/api/videos`);
         setVideos(res.data);
       } catch (error) {
         console.error("Error fetching videos", error);
@@ -21,7 +22,7 @@ const ManageVideos = () => {
   const deleteVideo = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/videos/${id}`, {
+      await axios.delete(`${API_URL}/api/videos/${id}`, {
         headers: { Authorization: token }
       });
       setVideos(videos.filter((v) => v._id !== id));

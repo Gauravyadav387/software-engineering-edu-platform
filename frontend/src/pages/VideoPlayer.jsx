@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,7 +12,7 @@ function VideoPlayer() {
   useEffect(() => {
     const fetchAndRecord = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/videos/${id}`);
+        const res = await axios.get(`${API_URL}/api/videos/${id}`);
         setVideo(res.data);
       } catch (err) {
         console.error("Failed to fetch video", err);
@@ -21,7 +22,7 @@ function VideoPlayer() {
 
       try {
         const token = localStorage.getItem("token");
-        await axios.post("http://localhost:5000/api/analytics/view", { videoId: id }, {
+        await axios.post(`${API_URL}/api/analytics/view`, { videoId: id }, {
           headers: { Authorization: token }
         });
       } catch (err) {

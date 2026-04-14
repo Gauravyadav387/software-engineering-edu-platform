@@ -1,6 +1,7 @@
 const Video = require("../models/video");
 const fs = require("fs");
 const path = require("path");
+const cloudinary = require("cloudinary").v2;
 
 require("../models/user");
 
@@ -10,13 +11,16 @@ exports.uploadVideo = async (req, res) => {
       return res.status(400).json({ error: "No video file provided" });
     }
 
-    const baseUrl = process.env.BASE_URL || "http://localhost:5000";
-    const videoUrl = `${baseUrl}/uploads/${req.file.filename}`;
+    // Cloudinary automatically maps the secure cloud URL to req.file.path
+    // and the exact generic Cloudinary ID to req.file.filename
+    const videoUrl = req.file.path;
+    const cloudinaryId = req.file.filename;
 
     const video = await Video.create({
       title: req.body.title,
       description: req.body.description,
       url: videoUrl,
+      cloudinary_id: cloudinaryId,
       teacher: req.user ? req.user.id : null, 
       subject: req.body.subject
     });
@@ -69,13 +73,22 @@ exports.deleteVideo = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized to delete this video" });
     }
 
-    // Delete physical file
-    if (video.url) {
-      const fileName = video.url.split("/").pop();
-      const filePath = path.join(__dirname, "../uploads", fileName);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    // Delete physical asset dynamically based on storage type
+    try {
+      if (video.cloudinary_id) {
+        // Purge carefully structured cloud videos
+        await cloudinary.uploader.destroy(video.cloudinary_id, { resource_type: "video" });
+      } else if (video.url && video.url.includes("localhost")) {
+        // Fallback cleanup for legacy hard drive videos
+        const fileName = video.url.split("/").pop();
+        const filePath = path.join(__dirname, "../uploads", fileName);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
       }
+    } catch(deleteErr) {
+      console.error("Cloudinary Deletion Interruption:", deleteErr);
+      // We don't abort deletion from DB if cloud fails, but we log it.
     }
 
     await Video.findByIdAndDelete(req.params.id);

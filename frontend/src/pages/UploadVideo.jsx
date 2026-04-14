@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +37,7 @@ const UploadVideo = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/videos/upload", formData, {
+      await axios.post(`${API_URL}/api/videos/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: token,

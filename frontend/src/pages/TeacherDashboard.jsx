@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const TeacherDashboard = () => {
   const [videos, setVideos] = useState([]);
@@ -9,7 +10,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/videos");
+        const res = await axios.get(`${API_URL}/api/videos`);
         setVideos(res.data);
       } catch (error) {
         console.error("Error fetching videos", error);

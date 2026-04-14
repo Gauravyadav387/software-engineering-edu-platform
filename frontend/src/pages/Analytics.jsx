@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +11,7 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/analytics", {
+        const res = await axios.get(`${API_URL}/api/analytics`, {
           headers: { Authorization: token },
         });
         setAnalytics(res.data);

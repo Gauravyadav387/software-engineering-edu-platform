@@ -10,7 +10,12 @@ const userSchema = new mongoose.Schema({
     default: "student"
   },
   resetOtp: String,
-  resetOtpExpire: Date
+  resetOtpExpire: Date,
+  status: {
+    type: String,
+    enum: ["Active", "Deactivated"],
+    default: "Active"
+  }
 }, { timestamps: true });
 
 

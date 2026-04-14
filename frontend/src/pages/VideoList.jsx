@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL || "https://api.yourdomain.com";
+
 function VideoList() {
   const { subject } = useParams();
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ function VideoList() {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/videos?subject=${subject}`);
+        const res = await axios.get(`${API_URL}/api/videos?subject=${subject}`);
         
         if (res.data && res.data.length > 0) {
           setVideos(res.data);
