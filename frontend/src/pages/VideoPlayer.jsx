@@ -10,6 +10,8 @@ function VideoPlayer() {
   const navigate = useNavigate();
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Issue #5 fix: track share feedback toast
+  const [shareMsg, setShareMsg] = useState("");
 
   useEffect(() => {
     const fetchAndRecord = async () => {
@@ -106,8 +108,37 @@ function VideoPlayer() {
               </span>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-bold transition">
+          <div className="flex gap-3 flex-col sm:flex-row items-start sm:items-center">
+            {shareMsg && (
+              <span className="text-green-400 text-sm font-medium animate-pulse">{shareMsg}</span>
+            )}
+            {/* ISSUE #5 FIX: Functional Share button using Web Share API with clipboard fallback */}
+            <button
+              onClick={async () => {
+                const shareUrl = window.location.href;
+                const shareData = {
+                  title: video.title,
+                  text: `Watch "${video.title}" on EduBridge!`,
+                  url: shareUrl,
+                };
+                try {
+                  if (navigator.share) {
+                    await navigator.share(shareData);
+                    setShareMsg("Shared successfully!");
+                  } else {
+                    await navigator.clipboard.writeText(shareUrl);
+                    setShareMsg("Link copied to clipboard!");
+                  }
+                } catch (err) {
+                  // User cancelled or browser denied
+                  if (err.name !== "AbortError") {
+                    setShareMsg("Could not share. Please copy the URL manually.");
+                  }
+                }
+                setTimeout(() => setShareMsg(""), 3000);
+              }}
+              className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-bold transition"
+            >
               Share Lesson
             </button>
             <button className="flex-1 sm:flex-none bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-xl font-bold transition border border-white/5">

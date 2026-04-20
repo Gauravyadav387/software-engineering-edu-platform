@@ -8,17 +8,28 @@ const ManageVideos = () => {
   const [videos, setVideos] = useState([]);
   const navigate = useNavigate();
 
+  // Get the logged-in teacher's ID for data isolation (fixes Issue #4)
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const teacherId = currentUser.id || currentUser._id;
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/videos`);
-        setVideos(res.data);
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${API_URL}/api/videos`, {
+          headers: { Authorization: token }
+        });
+        // SECURITY FIX #4: Only show this teacher's own videos
+        const myVideos = res.data.filter(
+          (v) => v.teacher && (v.teacher._id === teacherId || v.teacher === teacherId)
+        );
+        setVideos(myVideos);
       } catch (error) {
         console.error("Error fetching videos", error);
       }
     };
     fetchVideos();
-  }, []);
+  }, [teacherId]);
 
   const deleteVideo = async (id) => {
     try {

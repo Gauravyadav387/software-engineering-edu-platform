@@ -1,12 +1,15 @@
 const jwt = require("jsonwebtoken");
 
 exports.protect = (req, res, next) => {
-  const token = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ msg: "No token" });
+  if (!authHeader) return res.status(401).json({ msg: "No token" });
+
+  // Support both "Bearer <token>" and raw "<token>" formats
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "supersecret");
     req.user = decoded;
     next();
   } catch {
